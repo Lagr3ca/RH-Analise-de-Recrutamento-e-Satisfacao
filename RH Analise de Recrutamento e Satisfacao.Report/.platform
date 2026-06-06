@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "RH Analise de Recrutamento e Satisfacao"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c175f009-226e-43e1-97f5-c6cb86f438f0"
+  }
+}

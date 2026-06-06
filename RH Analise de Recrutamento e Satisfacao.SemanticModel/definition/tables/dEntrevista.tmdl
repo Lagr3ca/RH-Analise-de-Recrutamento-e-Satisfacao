@@ -1,0 +1,31 @@
+table dEntrevista
+	lineageTag: dc4bf30a-8f23-470f-a826-a3357ecf68d7
+
+	column Entrevista:
+		dataType: string
+		lineageTag: ce7919fc-83f5-47a7-87ec-cff87d000184
+		summarizeBy: none
+		sourceColumn: Entrevista:
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ano da Entrevista'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6f9f8d6f-36c0-47ac-8b28-4e35319dd5ba
+		summarizeBy: none
+		sourceColumn: Ano da Entrevista
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dEntrevista = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45Wcs0rKUotyywuSVQwVNJRMjIwMlSK1UERN4KIGynFxgIA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Entrevista:" = _t, #"Ano da Entrevista" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Entrevista:", type text}, {"Ano da Entrevista", Int64.Type}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+

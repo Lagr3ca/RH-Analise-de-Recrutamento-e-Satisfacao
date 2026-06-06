@@ -1,0 +1,23 @@
+relationship 6b2dc205-3b9e-44b6-97f1-dfd1a7b3d84e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dFuncionarios.'Data de Contratação:'
+	toColumn: LocalDateTable_78aae5c0-f312-4fa4-be87-9b9162ee2b39.Date
+
+relationship 880e269e-f642-4ef1-a29e-13d279ff52d0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fEntrevista.Data
+	toColumn: LocalDateTable_03fc7ca4-6181-4c4a-9927-906d406fc606.Date
+
+relationship f949a670-16e0-4b0e-a1da-4487171f01ac
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fEntrevista.Ano
+	toColumn: LocalDateTable_43a53bc7-98f6-490d-8779-6cb5349b2faf.Date
+
+relationship 218b6c15-7a2f-4824-bff1-615ed1f58c73
+	fromColumn: fEntrevista.Funcionário
+	toColumn: dFuncionarios.ID:
+
+relationship ea5891aa-63a8-4817-91d4-8d90d760419a
+	fromColumn: fEntrevista.Entrevista
+	toColumn: dEntrevista.Entrevista:
+

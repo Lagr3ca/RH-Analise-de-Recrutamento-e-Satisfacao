@@ -1,0 +1,94 @@
+table dFuncionarios
+	lineageTag: b77dd976-0822-4f4d-8f0f-85fdada18f99
+
+	column ID:
+		dataType: string
+		lineageTag: afa724e1-aee3-4c02-96d3-9d7392020e09
+		summarizeBy: none
+		sourceColumn: ID:
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unidade:
+		dataType: string
+		lineageTag: b99948ed-7e18-434a-9fbb-164e92b908a1
+		summarizeBy: none
+		sourceColumn: Unidade:
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nome:
+		dataType: string
+		lineageTag: 5f851bca-32b7-40bf-8aa4-7dd1540e332a
+		summarizeBy: none
+		sourceColumn: Nome:
+
+		annotation SummarizationSetBy = Automatic
+
+	column Idade:
+		dataType: int64
+		formatString: 0
+		lineageTag: c2f9ae89-822b-4f81-a044-a72e5bac825e
+		summarizeBy: sum
+		sourceColumn: Idade:
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cargo:
+		dataType: string
+		lineageTag: eaf08f64-4652-49a2-9822-3e84294a8f4a
+		summarizeBy: none
+		sourceColumn: Cargo:
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fonte de Recrutamento:'
+		dataType: string
+		lineageTag: 9fc7aa3b-f90f-4401-994b-494df16e245a
+		summarizeBy: none
+		sourceColumn: Fonte de Recrutamento:
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data de Contratação:'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f48120a7-8a9f-44a5-8977-b8b53f1d2725
+		summarizeBy: none
+		sourceColumn: Data de Contratação:
+
+		variation Variation
+			isDefault
+			relationship: 6b2dc205-3b9e-44b6-97f1-dfd1a7b3d84e
+			defaultHierarchy: LocalDateTable_78aae5c0-f312-4fa4-be87-9b9162ee2b39.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Faixa Etária:'
+		dataType: string
+		lineageTag: e441cd42-1b2a-4f2f-9710-a2ab799cee2f
+		summarizeBy: none
+		sourceColumn: Faixa Etária:
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dFuncionarios = m
+		mode: import
+		queryGroup: Modelagem
+		source =
+				let
+				    Fonte = Funcionarios,
+				    #"Linhas Classificadas" = Table.Sort(Fonte,{{"Idade:", Order.Ascending}}),
+				    #"Coluna Duplicada" = Table.DuplicateColumn(#"Linhas Classificadas", "Idade:", "Idade: - Copiar"),
+				    #"Colunas Reordenadas" = Table.ReorderColumns(#"Coluna Duplicada",{"ID:", "Unidade:", "Nome:", "Idade:", "Idade: - Copiar", "Cargo:", "Fonte de Recrutamento:", "Data de Contratação:"}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Colunas Reordenadas",{"Idade: - Copiar"}),
+				    #"Intervalo Inserido" = Table.AddColumn(#"Colunas Removidas", "Faixa Etária:", each let rangeSize = 5, offset = 1, inclusive = true, rangeIndex = Number.RoundDown(([#"Idade:"] - offset) / rangeSize) in Text.From(rangeIndex * rangeSize + offset, "pt-BR") & "-" & Text.From((rangeIndex + 1) * rangeSize + offset - (if inclusive then 1 else 0), "pt-BR"), type text)
+				in
+				    #"Intervalo Inserido"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

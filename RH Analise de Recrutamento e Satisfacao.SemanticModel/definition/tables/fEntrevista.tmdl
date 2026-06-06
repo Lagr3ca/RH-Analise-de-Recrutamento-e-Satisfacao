@@ -1,0 +1,88 @@
+table fEntrevista
+	lineageTag: 63984103-9d9d-4461-81bf-628831905fde
+
+	column Entrevista
+		dataType: string
+		lineageTag: ffe0799e-6683-450b-b800-da6b85fc2fce
+		summarizeBy: none
+		sourceColumn: Entrevista
+
+		annotation SummarizationSetBy = Automatic
+
+	column Data
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3e34e6bb-4436-4d30-b9af-50b1a3c87931
+		summarizeBy: none
+		sourceColumn: Data
+
+		variation Variation
+			isDefault
+			relationship: 880e269e-f642-4ef1-a29e-13d279ff52d0
+			defaultHierarchy: LocalDateTable_03fc7ca4-6181-4c4a-9927-906d406fc606.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Funcionário
+		dataType: string
+		lineageTag: 432db511-5d64-4847-a0d7-7a7d5e1a9259
+		summarizeBy: none
+		sourceColumn: Funcionário
+
+		annotation SummarizationSetBy = Automatic
+
+	column Assunto
+		dataType: string
+		lineageTag: 74b71532-24f4-4227-a978-56d1d82d36dc
+		summarizeBy: none
+		sourceColumn: Assunto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Resposta
+		dataType: string
+		lineageTag: 0ebf43a0-318e-4197-bb1e-ffd1b97a6b54
+		summarizeBy: none
+		sourceColumn: Resposta
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ano
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 78dcf8be-e537-40ca-abd8-a9188da61828
+		summarizeBy: none
+		sourceColumn: Ano
+
+		variation Variation
+			isDefault
+			relationship: f949a670-16e0-4b0e-a1da-4487171f01ac
+			defaultHierarchy: LocalDateTable_43a53bc7-98f6-490d-8779-6cb5349b2faf.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Ano da entrevista' = YEAR(fEntrevista[Data])
+		formatString: 0
+		lineageTag: b2661f1d-2bc1-4d78-9220-decf85485820
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fEntrevista = m
+		mode: import
+		queryGroup: Modelagem
+		source =
+				let
+				    Fonte = Table.Combine({#"Entrevista 1", #"Entrevista 2"}),
+				    #"Colunas Removidas" = Table.RemoveColumns(Fonte,{"Entrevista - Copiar"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "RH Analise de Recrutamento e Satisfacao"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "081c28bb-e2f9-481c-8862-b5a9caeb5c31"
+  }
+}

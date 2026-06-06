@@ -1,0 +1,70 @@
+expression 'Entrevista 1' =
+		let
+		    Fonte = Excel.Workbook(File.Contents("C:\Users\50129632024.1\Desktop\Projeto 2 - RH\Fonte de dados\Entrevista 1.xlsx"), null, true),
+		    #"Entrevista 1_Sheet" = Fonte{[Item="Entrevista 1",Kind="Sheet"]}[Data],
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Entrevista 1_Sheet", [PromoteAllScalars=true]),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"Primeira Entrevista:", type text}, {"Data:", type date}, {"Funcionário", type text}, {"Assunto", type text}, {"Resposta:", type text}, {"Column6", type any}, {"Column7", type any}, {"Column8", type any}, {"Column9", type any}}),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"Tipo Alterado",{"Primeira Entrevista:", "Data:", "Funcionário", "Assunto", "Resposta:"}),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Outras Colunas Removidas",{{"Primeira Entrevista:", "Entrevista"}, {"Data:", "Data"}, {"Resposta:", "Resposta"}}),
+		    #"Coluna Duplicada" = Table.DuplicateColumn(#"Colunas Renomeadas", "Data", "Data - Copiar"),
+		    #"Colunas Renomeadas1" = Table.RenameColumns(#"Coluna Duplicada",{{"Data - Copiar", "Ano"}})
+		in
+		    #"Colunas Renomeadas1"
+	lineageTag: 4e2d4f9d-48ad-4e8f-bfaf-4664fb889ccb
+	queryGroup: Consultas
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression 'Entrevista 2' =
+		let
+		    Fonte = Excel.Workbook(File.Contents("C:\Users\50129632024.1\Desktop\Projeto 2 - RH\Fonte de dados\Entrevista 2.xlsx"), null, true),
+		    #"Entrevista 2_Sheet" = Fonte{[Item="Entrevista 2",Kind="Sheet"]}[Data],
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Entrevista 2_Sheet", [PromoteAllScalars=true]),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"Segunda Entrevista:", type text}, {"Data:", type date}, {"Funcionário:", type text}, {"Assunto:", type text}, {"Resposta:", type text}, {"Column6", type any}, {"Column7", type any}, {"Column8", type any}}),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"Tipo Alterado",{"Segunda Entrevista:", "Data:", "Funcionário:", "Assunto:", "Resposta:"}),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Outras Colunas Removidas",{{"Segunda Entrevista:", "Entrevista"}, {"Funcionário:", "Funcionário"}, {"Assunto:", "Assunto"}, {"Resposta:", "Resposta"}, {"Data:", "Data"}}),
+		    #"Coluna Duplicada" = Table.DuplicateColumn(#"Colunas Renomeadas", "Entrevista", "Entrevista - Copiar"),
+		    #"Colunas Reordenadas" = Table.ReorderColumns(#"Coluna Duplicada",{"Entrevista", "Entrevista - Copiar", "Data", "Funcionário", "Assunto", "Resposta"}),
+		    #"Coluna Duplicada1" = Table.DuplicateColumn(#"Colunas Reordenadas", "Data", "Data - Copiar"),
+		    #"Colunas Renomeadas1" = Table.RenameColumns(#"Coluna Duplicada1",{{"Data - Copiar", "Ano"}})
+		in
+		    #"Colunas Renomeadas1"
+	lineageTag: ce6aa464-7d02-47e9-9827-3324c369695b
+	queryGroup: Consultas
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression Funcionarios =
+		let
+		    Fonte = Csv.Document(File.Contents("C:\Users\50129632024.1\Desktop\Projeto 2 - RH\Fonte de dados\Funcionarios.txt"),[Delimiter="	", Columns=7, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Fonte, [PromoteAllScalars=true]),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"ID:", type text}, {"Unidade:", type text}, {"Cargo/Nome:", type text}, {"Idade:", Int64.Type}, {"Status do Integrante:", type text}, {"Fonte de Recrutamento:", type text}, {"Data de Contratação:", type date}}),
+		    #"Dividir Coluna por Delimitador" = Table.SplitColumn(#"Tipo Alterado", "Cargo/Nome:", Splitter.SplitTextByDelimiter(" / ", QuoteStyle.Csv), {"Cargo/Nome:.1", "Cargo/Nome:.2"}),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Dividir Coluna por Delimitador",{{"Cargo/Nome:.1", "Cargo"}, {"Cargo/Nome:.2", "Nome"}}),
+		    #"Colunas Reordenadas" = Table.ReorderColumns(#"Colunas Renomeadas",{"ID:", "Unidade:", "Nome", "Idade:", "Cargo", "Status do Integrante:", "Fonte de Recrutamento:", "Data de Contratação:"}),
+		    #"Colunas Renomeadas1" = Table.RenameColumns(#"Colunas Reordenadas",{{"Cargo", "Cargo:"}, {"Nome", "Nome:"}}),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"Colunas Renomeadas1",{"ID:", "Unidade:", "Nome:", "Idade:", "Cargo:", "Fonte de Recrutamento:", "Data de Contratação:"})
+		in
+		    #"Outras Colunas Removidas"
+	lineageTag: f41d552a-3e9b-4c19-9ace-65acf80bb5f6
+	queryGroup: Consultas
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression Apêndice =
+		let
+		    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45Wcs7PKc1LVDBUio0FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}}),
+		    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Coluna 1"})
+		in
+		    #"Colunas Removidas"
+	lineageTag: f770d147-e524-4e5b-b135-ff404ddcf701
+
+	annotation PBI_ResultType = Table
+

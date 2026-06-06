@@ -1,0 +1,30 @@
+table Medidas
+	lineageTag: 933cb2a8-d310-493c-8f58-b8571ac6296e
+
+	measure Funcionários = COUNTROWS(dFuncionarios)
+		formatString: 0
+		lineageTag: 3e23b46d-f161-45a2-b3cb-80f875855dcc
+
+	measure 'Perguntas Respondidas' = COUNTROWS(fEntrevista)
+		formatString: 0
+		lineageTag: 5bfcd9c8-0d7a-4318-be64-d8ff17c2b43a
+
+	measure 'Quantidade de cargos' = DISTINCTCOUNT(dFuncionarios[Cargo:])
+		formatString: 0
+		lineageTag: d4dc86fa-ed21-4517-9a14-938c2b25ee12
+
+	measure 'Qtd de funcioos admitidos por ano'
+		lineageTag: fa8df31b-aa0d-4032-ac4b-1266766dfc81
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Apêndice = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Apêndice", type text}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Apêndice"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+
